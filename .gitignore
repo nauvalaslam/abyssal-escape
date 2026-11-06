@@ -1,0 +1,12 @@
+# Godot — generated files
+.godot/
+*.uid
+
+# Build output — jangan commit binary ke repo
+export/
+*.exe
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
