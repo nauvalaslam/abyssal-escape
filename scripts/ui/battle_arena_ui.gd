@@ -173,12 +173,14 @@ func _execute_enemy_turn() -> void:
 	# Formula: Base Attack musuh + randi_range(-2, +3)
 	# [ASUMSI] Rentang variasi sama dengan pemain. Sesuaikan jika diperlukan.
 	var variance:   int = randi_range(-2, 3)
-	var raw_dmg:    int = data["attack"] + variance
+	# Explicit cast int() agar tidak terjadi ambiguitas tipe dari Dictionary value
+	var raw_dmg:    int = int(data["attack"]) + variance
 	var actual_dmg: int = raw_dmg
 
 	if PlayerData.defense_active:
-		# [ASUMSI] Bertahan mengurangi damage sebesar 50% (integer division).
-		actual_dmg = raw_dmg / 2
+		# [ASUMSI] Bertahan mengurangi damage sebesar 50%.
+		# roundi() digunakan agar tidak memicu warning integer division
+		actual_dmg = roundi(raw_dmg * 0.5)
 		PlayerData.defense_active = false
 
 		# [BARU - Fitur 1] Cek Miss setelah pertahanan diterapkan

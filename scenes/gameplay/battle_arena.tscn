@@ -175,7 +175,6 @@ grow_horizontal = 2
 grow_vertical = 2
 visible = false
 z_index = 20
-theme_override_styles/panel = StyleBoxEmpty.new()
 
 [node name="PanelBackground" type="ColorRect" parent="OpeningPanel"]
 layout_mode = 1
