@@ -136,3 +136,80 @@ theme_override_font_sizes/font_size = 16
 [node name="EnemyTurnTimer" type="Timer" parent="."]
 wait_time = 1.5
 one_shot = true
+
+; =============================================================================
+; [BARU - Fitur 3] EncounterLabel — Teks "Kamu dihadang oleh X" dengan fade-out
+; Diletakkan di atas semua elemen lain (z_index tinggi), posisi tengah layar.
+; =============================================================================
+[node name="EncounterLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -30.0
+offset_right = 300.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+z_index = 10
+text = "Kamu dihadang oleh ..."
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1.0, 0.85, 0.3, 1)
+
+; =============================================================================
+; [BARU - Fitur 2] OpeningPanel — Panel narasi awal (hanya muncul di stage 0)
+; Overlay gelap semi-transparan yang menutupi seluruh layar.
+; =============================================================================
+[node name="OpeningPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+z_index = 20
+theme_override_styles/panel = StyleBoxEmpty.new()
+
+[node name="PanelBackground" type="ColorRect" parent="OpeningPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0, 0.0, 0.0, 0.82)
+
+[node name="CenterContainer" type="CenterContainer" parent="OpeningPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OpeningPanel/CenterContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(560, 0)
+theme_override_constants/separation = 32
+
+[node name="NarasiLabel" type="Label" parent="OpeningPanel/CenterContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Kamu terjebak di dalam goa dan kamu harus menelusuri goa ini untuk mencari jalan keluar."
+horizontal_alignment = 1
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.95, 0.90, 0.75, 1)
+
+[node name="ContinueButton" type="Button" parent="OpeningPanel/CenterContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(240, 54)
+text = "Eksplorasi"
+theme_override_font_sizes/font_size = 18
