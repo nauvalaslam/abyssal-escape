@@ -56,6 +56,15 @@ horizontal_alignment = 1
 theme_override_font_sizes/font_size = 26
 theme_override_colors/font_color = Color(1.0, 0.4, 0.4, 1)
 
+[node name="IntentLabel" type="Label" parent="MarginContainer/BattleContainer/EnemySection"]
+layout_mode = 2
+size_flags_horizontal = 4
+visible = false
+text = "⚠️ Musuh akan menyerang: -- DMG"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1.0, 0.85, 0.2, 1)
+
 [node name="EnemySprite" type="ColorRect" parent="MarginContainer/BattleContainer/EnemySection"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -200,7 +209,8 @@ theme_override_constants/separation = 32
 
 [node name="NarasiLabel" type="Label" parent="OpeningPanel/CenterContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(500, 0)
 text = "Kamu terjebak di dalam goa dan kamu harus menelusuri goa ini untuk mencari jalan keluar."
 horizontal_alignment = 1
 autowrap_mode = 3

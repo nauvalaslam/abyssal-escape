@@ -2,16 +2,16 @@
 # scripts/ui/battle_arena_ui.gd
 # Logika utama Battle Arena — sistem turn-based 1v1.
 #
-# CHANGELOG (Iterasi 2):
-#   [BARU] Fitur 1 — Randomisasi damage + mekanik "Miss"
-#   [BARU] Fitur 2 — Opening Screen (panel narasi awal, hanya stage 0)
-#   [BARU] Fitur 3 — Dynamic Encounter Text (teks fade-out nama musuh)
-#
-# Dipasang pada node root scene res://scenes/gameplay/battle_arena.tscn
+# CHANGELOG (Iterasi 3):
+#   [NEW FITUR 1] Bounded RNG damage formula + mekanik Miss
+#   [NEW FITUR 2] Temporary Shield menggantikan defense pasif
+#   [NEW FITUR 3] Enemy Intent System — musuh deklarasi aksi sebelum pemain
+#   [NEW FITUR 4] Stat scaling terintegrasi via PlayerData
+#   [NEW FITUR 5] Passive buff: Vampiric Strike, Retaliation, Second Wind
 # =============================================================================
 extends Control
 
-# --- Referensi Node lama (tidak berubah) -------------------------------------
+# --- Referensi Node lama -----------------------------------------------------
 @onready var stage_label:      Label     = $MarginContainer/BattleContainer/StageLabel
 @onready var enemy_name_label: Label     = $MarginContainer/BattleContainer/EnemySection/EnemyNameLabel
 @onready var enemy_sprite:     ColorRect = $MarginContainer/BattleContainer/EnemySection/EnemySprite
@@ -24,14 +24,20 @@ extends Control
 @onready var heal_btn:         Button    = $MarginContainer/BattleContainer/ActionButtons/HealButton
 @onready var enemy_turn_timer: Timer     = $EnemyTurnTimer
 
-# --- [BARU] Referensi Node tambahan (harus ditambahkan di .tscn) -------------
-@onready var opening_panel:    Panel     = $OpeningPanel             # Fitur 2: Panel narasi awal
-@onready var opening_continue: Button    = $OpeningPanel/ContinueButton  # Fitur 2: Tombol lanjutkan
-@onready var encounter_label:  Label     = $EncounterLabel           # Fitur 3: Teks fade-out
+# --- [NEW FITUR 3] IntentLabel — Deklarasi aksi musuh sebelum pemain memilih
+@onready var intent_label:     Label     = $MarginContainer/BattleContainer/EnemySection/IntentLabel
 
-# --- State lokal pertempuran (tidak berubah) ---------------------------------
+# --- Referensi Node Opening & Encounter (dari iterasi sebelumnya) ------------
+@onready var opening_panel:    Panel     = $OpeningPanel
+@onready var opening_continue: Button    = $OpeningPanel/CenterContainer/VBoxContainer/ContinueButton
+@onready var encounter_label:  Label     = $EncounterLabel
+
+# --- State lokal pertempuran -------------------------------------------------
 var enemy_max_hp:     int = 0
 var enemy_current_hp: int = 0
+
+# [NEW FITUR 3] Menyimpan damage yang sudah dideklarasikan musuh di awal giliran
+var enemy_declared_dmg: int = 0
 
 # =============================================================================
 # INISIALISASI
@@ -45,14 +51,10 @@ func _ready() -> void:
 	heal_btn.pressed.connect(_on_heal_pressed)
 	enemy_turn_timer.timeout.connect(_execute_enemy_turn)
 
-	# [BARU - Fitur 2] Cek apakah ini stage pertama (stage 0 = awal game).
-	# Jika ya, tampilkan panel narasi pembuka dan kunci tombol aksi dulu.
 	if PlayerData.current_stage == 0:
 		_show_opening_panel()
 	else:
-		# Stage selanjutnya (dari Reward Screen): langsung tampilkan encounter text
-		_set_buttons_disabled(false)
-		_show_encounter_text()   # [BARU - Fitur 3]
+		_start_player_turn()
 
 func _load_enemy_data() -> void:
 	var idx:  int        = PlayerData.current_stage
@@ -69,7 +71,14 @@ func _load_enemy_data() -> void:
 func _update_ui() -> void:
 	var edata: Dictionary = PlayerData.ENEMY_DATA[PlayerData.current_stage]
 	enemy_hp_label.text  = "%s  HP: %d / %d" % [edata["name"], enemy_current_hp, enemy_max_hp]
-	player_hp_label.text = "Hero  HP: %d / %d" % [PlayerData.current_hp, PlayerData.max_hp]
+
+	# [NEW FITUR 2] Tampilkan shield di label HP pemain jika aktif
+	if PlayerData.current_shield > 0:
+		player_hp_label.text = "Hero  HP: %d / %d  🛡 %d" % [
+			PlayerData.current_hp, PlayerData.max_hp, PlayerData.current_shield
+		]
+	else:
+		player_hp_label.text = "Hero  HP: %d / %d" % [PlayerData.current_hp, PlayerData.max_hp]
 
 func _set_buttons_disabled(disabled: bool) -> void:
 	attack_btn.disabled = disabled
@@ -77,145 +86,160 @@ func _set_buttons_disabled(disabled: bool) -> void:
 	heal_btn.disabled   = disabled
 
 # =============================================================================
-# [BARU - Fitur 2] OPENING PANEL — Narasi Awal
+# [NEW FITUR 3] ENEMY INTENT — Musuh mendeklarasikan aksi di awal giliran
 # =============================================================================
 
-func _show_opening_panel() -> void:
-	# Tampilkan panel narasi dan kunci semua tombol aksi sampai pemain klik lanjutkan
-	opening_panel.visible = true
-	_set_buttons_disabled(true)
-	opening_continue.pressed.connect(_on_opening_continue_pressed)
+func _start_player_turn() -> void:
+	# [NEW FITUR 2] Reset shield pemain di awal gilirannya
+	PlayerData.current_shield = 0
+	_update_ui()
 
-func _on_opening_continue_pressed() -> void:
-	# Sembunyikan panel lalu mulai pertempuran dengan encounter text
-	opening_panel.visible = false
+	# [NEW FITUR 3] Hitung dan tampilkan intent musuh SEBELUM pemain memilih
+	_declare_enemy_intent()
 	_set_buttons_disabled(false)
-	_show_encounter_text()   # [BARU - Fitur 3] Tampilkan teks musuh pertama
+	_show_encounter_text()
+
+func _declare_enemy_intent() -> void:
+	var edata: Dictionary = PlayerData.ENEMY_DATA[PlayerData.current_stage]
+	# [NEW FITUR 1 & 3] Hitung damage yang akan dilakukan musuh menggunakan rumus baru
+	# [ASUMSI] Defense pemain ikut diperhitungkan saat menentukan intent
+	enemy_declared_dmg = PlayerData.calculate_damage(
+		int(edata["attack"]),
+		PlayerData.defense_value
+	)
+
+	# [NEW FITUR 3] Tampilkan intent di IntentLabel
+	if enemy_declared_dmg <= 0:
+		intent_label.text = "⚡ %s akan menyerang: MISS?" % edata["name"]
+	else:
+		intent_label.text = "⚠️ %s akan menyerang: %d DMG" % [edata["name"], enemy_declared_dmg]
+	intent_label.visible = true
 
 # =============================================================================
-# [BARU - Fitur 3] DYNAMIC ENCOUNTER TEXT — Teks Nama Musuh Fade-Out
-# =============================================================================
-
-func _show_encounter_text() -> void:
-	var enemy_name: String = PlayerData.ENEMY_DATA[PlayerData.current_stage]["name"]
-
-	# Set teks sesuai format yang diminta
-	encounter_label.text    = "Kamu dihadang oleh %s." % enemy_name
-	encounter_label.modulate = Color(1.0, 1.0, 1.0, 1.0)  # Mulai dari opak penuh
-	encounter_label.visible  = true
-
-	# Juga tampilkan di battle log sebagai baris pertama sebelum aksi
-	battle_log.text = "⚠️  Kamu dihadang oleh %s!" % enemy_name
-
-	# Jalankan animasi fade-out menggunakan Tween bawaan Godot 4
-	var tween: Tween = create_tween()
-	# Tunggu 1.5 detik, lalu fade out selama 1 detik
-	tween.tween_interval(1.5)
-	tween.tween_property(encounter_label, "modulate", Color(1.0, 1.0, 1.0, 0.0), 1.0)
-	tween.tween_callback(func(): encounter_label.visible = false)
-
-# =============================================================================
-# [DIMODIFIKASI - Fitur 1] GILIRAN PEMAIN — Damage Random + Mekanik Miss
+# GILIRAN PEMAIN
 # =============================================================================
 
 func _on_attack_pressed() -> void:
 	_set_buttons_disabled(true)
+	intent_label.visible = false   # Sembunyikan intent saat aksi dimulai
 
-	# [DIMODIFIKASI - Fitur 1] Hitung damage dengan variasi acak.
-	# Formula: Base Attack + randi_range(-2, +3)
-	# [ASUMSI] Rentang variasi: -2 hingga +3. Sesuaikan jika diperlukan.
-	var variance: int = randi_range(-2, 3)
-	var dmg: int = PlayerData.attack_damage + variance
+	# [NEW FITUR 1] Hitung damage pemain dengan rumus bounded RNG
+	var edata: Dictionary = PlayerData.ENEMY_DATA[PlayerData.current_stage]
+	var dmg: int = PlayerData.calculate_damage(
+		PlayerData.attack_damage,
+		int(edata["defense"])
+	)
 
-	# [BARU - Fitur 1] Mekanik "Miss": jika damage <= 0, serangan meleset.
 	if dmg <= 0:
+		# [NEW FITUR 1] Mekanik Miss — HP musuh TIDAK dikurangi
 		battle_log.text = "⚡  Kamu menyerang... MISS! Serangan meleset!"
-		_update_ui()
-		enemy_turn_timer.start(1.5)
-		return   # Hentikan eksekusi — HP musuh TIDAK dikurangi
+	else:
+		enemy_current_hp = max(0, enemy_current_hp - dmg)
+		battle_log.text = "⚔️  Kamu menyerang %s untuk %d damage!" % [edata["name"], dmg]
 
-	enemy_current_hp = max(0, enemy_current_hp - dmg)
-	battle_log.text = "⚔️  Kamu menyerang %s untuk %d damage!" % [
-		PlayerData.ENEMY_DATA[PlayerData.current_stage]["name"], dmg
-	]
+		# [NEW FITUR 5] Vampiric Strike: heal 25% dari damage yang diberikan
+		if PlayerData.buff_vampiric:
+			var heal_amount: int = max(1, int(dmg * 0.25))
+			PlayerData.current_hp = min(PlayerData.current_hp + heal_amount, PlayerData.max_hp)
+			battle_log.text += "\n🩸 Vampiric! +%d HP" % heal_amount
+
 	_update_ui()
 
 	if enemy_current_hp <= 0:
 		_handle_enemy_death()
 	else:
-		enemy_turn_timer.start(1.5)
+		enemy_turn_timer.start(1.2)
 
 func _on_defend_pressed() -> void:
 	_set_buttons_disabled(true)
-	PlayerData.defense_active = true
-	battle_log.text = "🛡️  Kamu bersiap bertahan. Damage musuh akan berkurang 50%!"
+	intent_label.visible = false
+
+	# [NEW FITUR 2] Berikan Temporary Shield — menggantikan defense pasif
+	# [ASUMSI] Nilai shield = 10. Sesuaikan jika perlu.
+	const SHIELD_AMOUNT: int = 10
+	PlayerData.current_shield = SHIELD_AMOUNT
+	battle_log.text = "🛡️  Kamu memasang perisai! Shield: %d" % SHIELD_AMOUNT
 	_update_ui()
-	enemy_turn_timer.start(1.5)
+	enemy_turn_timer.start(1.2)
 
 func _on_heal_pressed() -> void:
 	_set_buttons_disabled(true)
-	# [ASUMSI] Jumlah HP yang dipulihkan saat aksi Heal = 20.
-	const HEAL_AMOUNT: int = 20
+	intent_label.visible = false
+
+	# [ASUMSI] Heal = 15 HP per aksi (disesuaikan dengan stat scaling baru)
+	const HEAL_AMOUNT: int = 15
 	var healed: int = min(HEAL_AMOUNT, PlayerData.max_hp - PlayerData.current_hp)
 	PlayerData.current_hp += healed
 	battle_log.text = "💚  Kamu memulihkan %d HP!" % healed
 	_update_ui()
-	enemy_turn_timer.start(1.5)
+	enemy_turn_timer.start(1.2)
 
 # =============================================================================
-# [DIMODIFIKASI - Fitur 1] GILIRAN MUSUH — Damage Random + Mekanik Miss
+# [NEW FITUR 3] GILIRAN MUSUH — Eksekusi damage yang sudah dideklarasikan
 # =============================================================================
 
 func _execute_enemy_turn() -> void:
-	var data: Dictionary = PlayerData.ENEMY_DATA[PlayerData.current_stage]
+	var edata: Dictionary = PlayerData.ENEMY_DATA[PlayerData.current_stage]
+	# [NEW FITUR 3] Gunakan damage yang sudah dideklarasikan sebelumnya
+	var actual_dmg: int   = enemy_declared_dmg
 
-	# [DIMODIFIKASI - Fitur 1] Damage musuh juga memiliki variasi acak.
-	# Formula: Base Attack musuh + randi_range(-2, +3)
-	# [ASUMSI] Rentang variasi sama dengan pemain. Sesuaikan jika diperlukan.
-	var variance:   int = randi_range(-2, 3)
-	# Explicit cast int() agar tidak terjadi ambiguitas tipe dari Dictionary value
-	var raw_dmg:    int = int(data["attack"]) + variance
-	var actual_dmg: int = raw_dmg
+	if actual_dmg <= 0:
+		# [NEW FITUR 1] Miss musuh
+		battle_log.text = "⚡  %s menyerang... MISS! Serangan meleset!" % edata["name"]
+		_start_player_turn()
+		return
 
-	if PlayerData.defense_active:
-		# [ASUMSI] Bertahan mengurangi damage sebesar 50%.
-		# roundi() digunakan agar tidak memicu warning integer division
-		actual_dmg = roundi(raw_dmg * 0.5)
-		PlayerData.defense_active = false
+	# [NEW FITUR 2] Proses Temporary Shield terlebih dahulu
+	var shield_before: int = PlayerData.current_shield
+	if PlayerData.current_shield > 0:
+		var absorbed: int = min(PlayerData.current_shield, actual_dmg)
+		PlayerData.current_shield -= absorbed
+		actual_dmg -= absorbed
+		battle_log.text = "🛡️  %s menyerang! Shield menyerap %d. " % [edata["name"], absorbed]
 
-		# [BARU - Fitur 1] Cek Miss setelah pertahanan diterapkan
-		if actual_dmg <= 0:
-			battle_log.text = "🛡️  %s menyerang! Pertahananmu memblok penuh — MISS!" % data["name"]
-			_set_buttons_disabled(false)
-			return
-
-		battle_log.text = (
-			"🛡️  %s menyerang! Bertahan! Kamu menerima %d damage (dari %d)."
-			% [data["name"], actual_dmg, raw_dmg]
-		)
+		# [NEW FITUR 5] Retaliation: pantul 50% dari total damage ke musuh saat shield aktif
+		if PlayerData.buff_retaliation and shield_before > 0:
+			var retaliation_dmg: int = max(1, int(enemy_declared_dmg * 0.5))
+			enemy_current_hp = max(0, enemy_current_hp - retaliation_dmg)
+			battle_log.text += "\n⚡ Retaliation! %s menerima %d damage balik!" % [edata["name"], retaliation_dmg]
+			_update_ui()
+			if enemy_current_hp <= 0:
+				_handle_enemy_death()
+				return
 	else:
-		# [BARU - Fitur 1] Cek Miss tanpa pertahanan
-		if actual_dmg <= 0:
-			battle_log.text = "⚡  %s menyerang... MISS! Serangan meleset!" % data["name"]
-			_set_buttons_disabled(false)
-			return
+		battle_log.text = "💀  %s menyerang! " % edata["name"]
 
-		battle_log.text = "💀  %s menyerang! Kamu menerima %d damage!" % [data["name"], actual_dmg]
+	# Kurangi HP pemain dengan sisa damage setelah shield
+	if actual_dmg > 0:
+		PlayerData.current_hp = max(0, PlayerData.current_hp - actual_dmg)
+		battle_log.text += "Kamu menerima %d damage!" % actual_dmg
+	else:
+		battle_log.text += "Shield memblok semua damage!"
 
-	PlayerData.current_hp = max(0, PlayerData.current_hp - actual_dmg)
 	_update_ui()
+
+	# [NEW FITUR 5] Second Wind: bangkit 1x saat HP = 0
+	if PlayerData.current_hp <= 0 and PlayerData.buff_second_wind and not PlayerData.second_wind_used:
+		PlayerData.second_wind_used = true
+		var revive_hp: int = max(1, int(PlayerData.max_hp * 0.30))
+		PlayerData.current_hp = revive_hp
+		battle_log.text += "\n💨 Second Wind! HP pulih ke %d!" % revive_hp
+		_update_ui()
+		_start_player_turn()
+		return
 
 	if PlayerData.current_hp <= 0:
 		_handle_player_death()
 	else:
-		_set_buttons_disabled(false)
+		_start_player_turn()
 
 # =============================================================================
-# KONDISI AKHIR PERTEMPURAN (tidak berubah)
+# KONDISI AKHIR PERTEMPURAN
 # =============================================================================
 
 func _handle_enemy_death() -> void:
 	_set_buttons_disabled(true)
+	intent_label.visible = false
 	var ename: String = PlayerData.ENEMY_DATA[PlayerData.current_stage]["name"]
 
 	if PlayerData.is_boss_stage():
@@ -233,3 +257,28 @@ func _handle_player_death() -> void:
 	await get_tree().create_timer(2.5).timeout
 	PlayerData.reset_player()
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
+
+# =============================================================================
+# UI HELPER (Opening & Encounter — dari iterasi sebelumnya)
+# =============================================================================
+
+func _show_opening_panel() -> void:
+	opening_panel.visible = true
+	_set_buttons_disabled(true)
+	opening_continue.pressed.connect(_on_opening_continue_pressed)
+
+func _on_opening_continue_pressed() -> void:
+	opening_panel.visible = false
+	_start_player_turn()
+
+func _show_encounter_text() -> void:
+	var enemy_name: String = PlayerData.ENEMY_DATA[PlayerData.current_stage]["name"]
+	encounter_label.text     = "Kamu dihadang oleh %s." % enemy_name
+	encounter_label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	encounter_label.visible  = true
+	battle_log.text = "⚠️  Kamu dihadang oleh %s!" % enemy_name
+
+	var tween: Tween = create_tween()
+	tween.tween_interval(1.5)
+	tween.tween_property(encounter_label, "modulate", Color(1.0, 1.0, 1.0, 0.0), 1.0)
+	tween.tween_callback(func(): encounter_label.visible = false)
