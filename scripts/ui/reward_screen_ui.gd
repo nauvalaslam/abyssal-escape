@@ -1,30 +1,66 @@
 # =============================================================================
 # scripts/ui/reward_screen_ui.gd
-# Layar Roguelike Reward — 3 passive buff unik (Iterasi 3).
+# Layar Roguelike Reward — Dua-Tier Buff System (Iterasi 4 FINAL).
 #
-# [NEW FITUR 5] Buff dirombak menjadi kemampuan pasif sinergis:
-#   - Vampiric Strike: heal 25% dari damage diberikan
-#   - Retaliation: pantul 50% dmg ke musuh saat shield aktif
-#   - Second Wind: bangkit 1x saat HP = 0 (pulih 30% Max HP)
+# [NEW FITUR 2] Pool reward dibedakan berdasarkan jenis musuh yang baru dikalahkan:
+#   - Keroco/Minion → Normal Buff  (+10 HP, +2 Atk, Heal 50%)
+#   - Boss          → Synergistic Passive Buff (Vampiric, Retaliation, Second Wind)
 # =============================================================================
 extends Control
 
 @onready var title_label:      Label  = $CenterContainer/VBoxContainer/TitleLabel
 @onready var next_enemy_label: Label  = $CenterContainer/VBoxContainer/NextEnemyLabel
+@onready var tier_label:       Label  = $CenterContainer/VBoxContainer/TierLabel
 @onready var buff1_btn:        Button = $CenterContainer/VBoxContainer/Buff1Button
 @onready var buff2_btn:        Button = $CenterContainer/VBoxContainer/Buff2Button
 @onready var buff3_btn:        Button = $CenterContainer/VBoxContainer/Buff3Button
 
 func _ready() -> void:
-	var next_stage: int    = PlayerData.current_stage + 1
-	var next_name:  String = PlayerData.ENEMY_DATA[next_stage]["name"]
+	# [NEW FITUR 1] Tampilkan musuh berikutnya (stage + 1)
+	var next_stage: int = PlayerData.current_stage + 1
+	if next_stage < PlayerData.ENEMY_DATA.size():
+		var next_data: Dictionary = PlayerData.ENEMY_DATA[next_stage]
+		var next_name: String     = str(next_data["name"])
+		var next_is_boss: bool    = bool(next_data["is_boss"])
+		next_enemy_label.text = "Musuh berikutnya: %s%s" % [
+			next_name,
+			"  👑" if next_is_boss else ""
+		]
+	else:
+		next_enemy_label.text = "Ini adalah pertarungan terakhir!"
 
-	title_label.text      = "PILIH PASSIVE BUFF"
-	next_enemy_label.text = "Musuh berikutnya: %s" % next_name
+	# [NEW FITUR 2] Pilih tier reward berdasarkan jenis musuh yang baru dikalahkan
+	if PlayerData.last_defeated_was_boss:
+		_setup_synergistic_buffs()   # [NEW FITUR 2] Boss defeated → Passive buff
+	else:
+		_setup_normal_buffs()        # [NEW FITUR 2] Keroco defeated → Normal buff
 
-	# [NEW FITUR 5] Teks buff pasif unik — tandai jika sudah dimiliki
+# -----------------------------------------------------------------------------
+# [NEW FITUR 2] TIER 1: Normal Buff (setelah mengalahkan Keroco)
+# -----------------------------------------------------------------------------
+func _setup_normal_buffs() -> void:
+	title_label.text = "PILIH REWARD"
+	tier_label.text  = "Normal Buff"
+	tier_label.add_theme_color_override("font_color", Color(0.6, 0.9, 0.6, 1))
+
+	buff1_btn.text = "❤️  +10 Max HP"
+	buff2_btn.text = "⚔️  +2 Attack"
+	buff3_btn.text = "💊  Heal 50% HP"
+
+	buff1_btn.pressed.connect(func(): _apply_and_next("hp_up"))
+	buff2_btn.pressed.connect(func(): _apply_and_next("atk_up"))
+	buff3_btn.pressed.connect(func(): _apply_and_next("heal_half"))
+
+# -----------------------------------------------------------------------------
+# [NEW FITUR 2] TIER 2: Synergistic Passive Buff (setelah mengalahkan Boss)
+# -----------------------------------------------------------------------------
+func _setup_synergistic_buffs() -> void:
+	title_label.text = "PILIH PASSIVE BUFF"
+	tier_label.text  = "👑  Boss Reward"
+	tier_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2, 1))
+
 	buff1_btn.text = _buff_label(
-		"🩸 Vampiric Strike",
+		"🧛 Vampiric Strike",
 		"Heal 25% dari setiap damage yang diberikan",
 		PlayerData.buff_vampiric
 	)
@@ -43,11 +79,11 @@ func _ready() -> void:
 	buff2_btn.pressed.connect(func(): _apply_and_next("retaliation"))
 	buff3_btn.pressed.connect(func(): _apply_and_next("second_wind"))
 
-# Helper: format label tombol buff + tanda [AKTIF] jika sudah dimiliki
-func _buff_label(name: String, desc: String, already_owned: bool) -> String:
+# Helper: format tombol buff + tanda [SUDAH AKTIF] jika sudah dimiliki
+func _buff_label(bname: String, desc: String, already_owned: bool) -> String:
 	if already_owned:
-		return "%s\n%s\n[SUDAH AKTIF]" % [name, desc]
-	return "%s\n%s" % [name, desc]
+		return "%s\n%s\n✅ [SUDAH AKTIF]" % [bname, desc]
+	return "%s\n%s" % [bname, desc]
 
 func _apply_and_next(buff_type: String) -> void:
 	buff1_btn.disabled = true
