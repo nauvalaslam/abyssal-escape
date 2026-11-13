@@ -15,7 +15,8 @@ extends Control
 
 # --- Referensi Node ----------------------------------------------------------
 @onready var stage_label:      Label       = $MarginContainer/BattleContainer/StageLabel
-@onready var enemy_name_label: Label       = $MarginContainer/BattleContainer/EnemySection/EnemyNameLabel
+@onready var enemy_name_label: Label       = $MarginContainer/BattleContainer/EnemySection/EnemyHeader/EnemyNameLabel
+@onready var boss_icon:        TextureRect = $MarginContainer/BattleContainer/EnemySection/EnemyHeader/BossIcon
 @onready var enemy_sprite:     ColorRect   = $MarginContainer/BattleContainer/EnemySection/EnemySprite
 @onready var enemy_hp_label:   Label       = $MarginContainer/BattleContainer/EnemySection/EnemyHPLabel
 @onready var battle_log:       Label       = $MarginContainer/BattleContainer/BattleLog
@@ -124,6 +125,18 @@ func _update_music() -> void:
 	else:
 		AudioManager.play_battle()
 
+func _get_boss_icon_texture() -> Texture2D:
+	if ResourceLoader.exists("res://assets/icons/boss_icon.png"):
+		var res = load("res://assets/icons/boss_icon.png")
+		if res is Texture2D:
+			return res
+	var full_path: String = ProjectSettings.globalize_path("res://assets/icons/boss_icon.png")
+	if FileAccess.file_exists("res://assets/icons/boss_icon.png"):
+		var img: Image = Image.load_from_file(full_path)
+		if img:
+			return ImageTexture.create_from_image(img)
+	return null
+
 func _load_enemy_data() -> void:
 	var idx:  int        = PlayerData.current_stage
 	var data: Dictionary = PlayerData.ENEMY_DATA[idx]
@@ -136,12 +149,17 @@ func _load_enemy_data() -> void:
 	if is_boss:
 		# [NEW FITUR 1] Warna emas untuk boss
 		enemy_name_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.1, 1.0))
-		enemy_name_label.text = "👑 " + str(data["name"])
-		stage_label.text = "Stage %d / %d  👑 BOSS" % [idx + 1, PlayerData.ENEMY_DATA.size()]
+		enemy_name_label.text = str(data["name"])
+		stage_label.text = "Stage %d / %d  [BOSS]" % [idx + 1, PlayerData.ENEMY_DATA.size()]
+		if boss_icon:
+			boss_icon.texture = _get_boss_icon_texture()
+			boss_icon.visible = true
 	else:
 		enemy_name_label.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 1.0))
 		enemy_name_label.text = str(data["name"])
 		stage_label.text = "Stage %d / %d" % [idx + 1, PlayerData.ENEMY_DATA.size()]
+		if boss_icon:
+			boss_icon.visible = false
 
 	enemy_sprite.color  = data["color"]
 	player_sprite.color = Color(0.25, 0.45, 0.85, 1.0)
@@ -152,7 +170,7 @@ func _update_ui() -> void:
 
 	# [NEW FITUR 5] Tampilkan shield di label HP pemain jika aktif
 	if PlayerData.current_shield > 0:
-		player_hp_label.text = "Hero  HP: %d / %d  🛡 %d" % [
+		player_hp_label.text = "Hero  HP: %d / %d  [Shield: %d]" % [
 			PlayerData.current_hp, PlayerData.max_hp, PlayerData.current_shield
 		]
 	else:
@@ -196,9 +214,9 @@ func _declare_enemy_intent() -> void:
 
 	# [NEW FITUR 3] Tampilkan ke IntentLabel
 	if enemy_declared_dmg <= 0:
-		intent_label.text = "⚡ %s bersiap menyerang..." % str(edata["name"])
+		intent_label.text = "%s bersiap menyerang..." % str(edata["name"])
 	else:
-		intent_label.text = "⚡ %s akan menyerang: %d DMG" % [str(edata["name"]), enemy_declared_dmg]
+		intent_label.text = "%s akan menyerang: %d DMG" % [str(edata["name"]), enemy_declared_dmg]
 	intent_label.visible = true
 
 # =============================================================================
@@ -215,16 +233,16 @@ func _on_attack_pressed() -> void:
 
 	if dmg <= 0:
 		# [NEW FITUR 4] Miss — damage 0 setelah kalkulasi
-		battle_log.text = "⚔️  Kamu menyerang... MISS! Serangan meleset!"
+		battle_log.text = "Kamu menyerang... MISS! Serangan meleset!"
 	else:
 		enemy_current_hp = max(0, enemy_current_hp - dmg)
-		battle_log.text  = "⚔️  Kamu menyerang %s! %d damage!" % [str(edata["name"]), dmg]
+		battle_log.text  = "Kamu menyerang %s! %d damage!" % [str(edata["name"]), dmg]
 
 		# [NEW FITUR 5] Vampiric Strike: heal 25% dari damage yang diberikan
 		if PlayerData.buff_vampiric:
 			var leech: int = max(1, int(dmg * 0.25))
 			PlayerData.current_hp = min(PlayerData.max_hp, PlayerData.current_hp + leech)
-			battle_log.text += "\n🧛 Vampiric! Pulih %d HP." % leech
+			battle_log.text += "\nVampiric! Pulih %d HP." % leech
 
 	_update_ui()
 
@@ -241,7 +259,7 @@ func _on_defend_pressed() -> void:
 	# [NEW FITUR 5] Temporary Shield = 10
 	# [ASUMSI] Nilai shield flat 10 per aksi Bertahan
 	PlayerData.current_shield = 10
-	battle_log.text = "🛡️  Kamu bersiap! Shield +10 aktif."
+	battle_log.text = "Kamu bersiap! Shield +10 aktif."
 	_update_ui()
 	enemy_turn_timer.start(1.2)
 
@@ -253,7 +271,7 @@ func _on_heal_pressed() -> void:
 	const HEAL_AMOUNT: int = 15
 	var healed: int = min(HEAL_AMOUNT, PlayerData.max_hp - PlayerData.current_hp)
 	PlayerData.current_hp += healed
-	battle_log.text = "💊  Kamu memulihkan %d HP!" % healed
+	battle_log.text = "Kamu memulihkan %d HP!" % healed
 	_update_ui()
 	enemy_turn_timer.start(1.2)
 
@@ -266,7 +284,7 @@ func _execute_enemy_turn() -> void:
 	# [NEW FITUR 4] Bias probabilitas musuh: 35% flat miss SEBELUM kalkulasi damage
 	# [ASUMSI] Peluang mutlak 35% agar musuh miss, membuat game lebih winnable
 	if randf() < ENEMY_MISS_CHANCE:
-		battle_log.text = "⚡  %s menyerang... MISS! Serangan meleset!" % str(edata["name"])
+		battle_log.text = "%s menyerang... MISS! Serangan meleset!" % str(edata["name"])
 		_start_player_turn()
 		return
 
@@ -275,7 +293,7 @@ func _execute_enemy_turn() -> void:
 
 	if actual_dmg <= 0:
 		# [NEW FITUR 4] Miss karena kalkulasi damage = 0
-		battle_log.text = "⚡  %s menyerang... MISS!" % str(edata["name"])
+		battle_log.text = "%s menyerang... MISS!" % str(edata["name"])
 		_start_player_turn()
 		return
 
@@ -285,19 +303,19 @@ func _execute_enemy_turn() -> void:
 		var absorbed: int = min(PlayerData.current_shield, actual_dmg)
 		PlayerData.current_shield -= absorbed
 		actual_dmg -= absorbed
-		battle_log.text = "🛡️  %s menyerang! Shield menyerap %d. " % [str(edata["name"]), absorbed]
+		battle_log.text = "%s menyerang! Shield menyerap %d. " % [str(edata["name"]), absorbed]
 
 		# [NEW FITUR 5] Retaliation: pantul 50% dari total damage ke musuh saat shield aktif
 		if PlayerData.buff_retaliation and shield_before > 0:
 			var retaliation_dmg: int = max(1, int(enemy_declared_dmg * 0.5))
 			enemy_current_hp = max(0, enemy_current_hp - retaliation_dmg)
-			battle_log.text += "\n⚡ Retaliation! %s menerima %d damage balik!" % [str(edata["name"]), retaliation_dmg]
+			battle_log.text += "\nRetaliation! %s menerima %d damage balik!" % [str(edata["name"]), retaliation_dmg]
 			_update_ui()
 			if enemy_current_hp <= 0:
 				_handle_enemy_death()
 				return
 	else:
-		battle_log.text = "💥  %s menyerang! " % str(edata["name"])
+		battle_log.text = "%s menyerang! " % str(edata["name"])
 
 	# Kurangi HP pemain dengan sisa damage setelah shield
 	if actual_dmg > 0:
@@ -313,7 +331,7 @@ func _execute_enemy_turn() -> void:
 		PlayerData.second_wind_used = true
 		var revive_hp: int = max(1, int(PlayerData.max_hp * 0.30))
 		PlayerData.current_hp = revive_hp
-		battle_log.text += "\n💨 Second Wind! HP pulih ke %d!" % revive_hp
+		battle_log.text += "\nSecond Wind! HP pulih ke %d!" % revive_hp
 		_update_ui()
 		_start_player_turn()
 		return
@@ -337,18 +355,18 @@ func _handle_enemy_death() -> void:
 	# [NEW FITUR 1] Cek apakah ini final boss (Dragon, stage terakhir)
 	if PlayerData.is_final_boss():
 		AudioManager.play_win()
-		battle_log.text = "🎉  %s dikalahkan! Kamu berhasil melarikan diri dari jurang!" % ename
+		battle_log.text = "%s dikalahkan! Kamu berhasil melarikan diri dari jurang!" % ename
 		await get_tree().create_timer(2.0).timeout
 		get_tree().change_scene_to_file("res://scenes/main_menu/win_screen.tscn")
 	else:
-		battle_log.text = "✨  %s dikalahkan! Ambil rewardmu!" % ename
+		battle_log.text = "%s dikalahkan! Ambil rewardmu!" % ename
 		await get_tree().create_timer(1.5).timeout
 		get_tree().change_scene_to_file("res://scenes/gameplay/reward_screen.tscn")
 
 func _handle_player_death() -> void:
 	_set_buttons_disabled(true)
 	AudioManager.play_lose()
-	battle_log.text = "💀  Kamu telah dikalahkan... GAME OVER."
+	battle_log.text = "Kamu telah dikalahkan... GAME OVER."
 	await get_tree().create_timer(2.5).timeout
 	PlayerData.reset_player()
 	# [BG] Pindah ke scene Game Over khusus
@@ -366,7 +384,7 @@ func _show_encounter_text() -> void:
 	encounter_label.text     = "Kamu dihadang oleh %s." % enemy_name
 	encounter_label.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	encounter_label.visible  = true
-	battle_log.text = "⚔️  Kamu dihadang oleh %s!" % enemy_name
+	battle_log.text = "Kamu dihadang oleh %s!" % enemy_name
 
 	var tween: Tween = create_tween()
 	tween.tween_interval(1.5)

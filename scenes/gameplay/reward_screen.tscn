@@ -52,7 +52,21 @@ theme_override_font_sizes/font_size = 38
 text = "PILIH REWARD"
 horizontal_alignment = 1
 
-[node name="NextEnemyLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=992120822]
+[node name="NextEnemyHeader" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="NextBossIcon" type="TextureRect" parent="CenterContainer/VBoxContainer/NextEnemyHeader"]
+visible = false
+custom_minimum_size = Vector2(18, 24)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NextEnemyLabel" type="Label" parent="CenterContainer/VBoxContainer/NextEnemyHeader" unique_id=992120822]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.8, 0.5, 0.5, 1)
@@ -60,7 +74,21 @@ theme_override_font_sizes/font_size = 16
 text = "Musuh berikutnya: ..."
 horizontal_alignment = 1
 
-[node name="TierLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1474632149]
+[node name="TierHeader" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="TierBossIcon" type="TextureRect" parent="CenterContainer/VBoxContainer/TierHeader"]
+visible = false
+custom_minimum_size = Vector2(22, 30)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TierLabel" type="Label" parent="CenterContainer/VBoxContainer/TierHeader" unique_id=1474632149]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.6, 0.9, 0.6, 1)
