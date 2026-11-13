@@ -31,8 +31,12 @@ extends Control
 @onready var intent_label:     Label       = $MarginContainer/BattleContainer/EnemySection/IntentLabel
 
 # Node Opening & Encounter
-@onready var opening_panel:    Panel       = $OpeningPanel
-@onready var encounter_label:  Label       = $EncounterLabel
+@onready var opening_panel:    Panel         = $OpeningPanel
+@onready var encounter_label:  Label         = $EncounterLabel
+
+# [OPTION] Tombol Pengaturan & Modal
+@onready var settings_button:  TextureButton = $SettingsButton
+@onready var options_modal:    Control       = $OptionsModal
 
 # --- [BG] Mapping background per kelompok stage ------------------------------
 # Stage 1-4  (index 0-3)  : Slime
@@ -82,6 +86,7 @@ func _ready() -> void:
 	defend_btn.pressed.connect(_on_defend_pressed)
 	heal_btn.pressed.connect(_on_heal_pressed)
 	enemy_turn_timer.timeout.connect(_execute_enemy_turn)
+	settings_button.pressed.connect(options_modal.open)
 
 	# Hubungkan tombol Continue di OpeningPanel
 	var continue_btn: Button = $OpeningPanel/CenterContainer/VBoxContainer/ContinueButton

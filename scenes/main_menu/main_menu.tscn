@@ -1,7 +1,8 @@
-[gd_scene format=3 uid="uid://bq3f7pnaxb7m"]
+[gd_scene load_steps=4 format=3 uid="uid://bq3f7pnaxb7m"]
 
 [ext_resource type="Script" uid="uid://bs35clqu4dc1u" path="res://scripts/ui/main_menu_ui.gd" id="1_mnscr"]
 [ext_resource type="Texture2D" uid="uid://dinuxiupiyhjk" path="res://assets/backgrounds/main_menu.jpg" id="2_0ebjn"]
+[ext_resource type="PackedScene" path="res://scenes/ui/options_modal.tscn" id="3_optmodal"]
 
 [node name="MainMenu" type="Control" unique_id=1112784214]
 layout_mode = 3
@@ -67,6 +68,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Start Game"
 
+[node name="OptionsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1982736451]
+custom_minimum_size = Vector2(260, 54)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Options"
+
 [node name="CreditsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=274896408]
 custom_minimum_size = Vector2(260, 54)
 layout_mode = 2
@@ -78,3 +85,7 @@ custom_minimum_size = Vector2(260, 54)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Quit"
+
+[node name="OptionsModal" parent="." instance=ExtResource("3_optmodal")]
+visible = false
+layout_mode = 1

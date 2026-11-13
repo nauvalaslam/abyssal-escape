@@ -23,12 +23,25 @@ const TRACKS: Dictionary = {
 
 var current_track: String = ""
 var bgm_player: AudioStreamPlayer
+var music_volume: float = 0.8  # Volume default 80% (0.0 - 1.0)
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	bgm_player = AudioStreamPlayer.new()
 	bgm_player.bus = "Master"
 	add_child(bgm_player)
+	set_volume(music_volume)
+
+func set_volume(value: float) -> void:
+	music_volume = clamp(value, 0.0, 1.0)
+	if bgm_player:
+		if music_volume <= 0.001:
+			bgm_player.volume_db = -80.0
+		else:
+			bgm_player.volume_db = linear_to_db(music_volume)
+
+func get_volume() -> float:
+	return music_volume
 
 func play_track(track_name: String) -> void:
 	# Jika track yang sama sedang berputar, jangan restart dari detik ke-0
@@ -59,6 +72,7 @@ func play_track(track_name: String) -> void:
 
 	if stream:
 		bgm_player.stream = stream
+		set_volume(music_volume)
 		bgm_player.play()
 		current_track = track_name
 
