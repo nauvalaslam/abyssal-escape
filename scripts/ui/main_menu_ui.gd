@@ -10,6 +10,8 @@ extends Control
 @onready var background_rect: TextureRect = $Background
 
 func _ready() -> void:
+	AudioManager.play_main_menu()
+
 	# Load background via GDScript agar tidak butuh .import file di .tscn
 	var tex: Texture2D = load("res://assets/backgrounds/main_menu.jpg")
 	if tex:

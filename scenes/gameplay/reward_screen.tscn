@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://dv2k9r5mwyx3"]
+[gd_scene format=3 uid="uid://dv2lar5mwyx3"]
 
-[ext_resource type="Script" path="res://scripts/ui/reward_screen_ui.gd" id="1_rwscr"]
+[ext_resource type="Script" uid="uid://u67xeebem5kj" path="res://scripts/ui/reward_screen_ui.gd" id="1_rwscr"]
+[ext_resource type="Texture2D" uid="uid://dinuxiupiyhjk" path="res://assets/backgrounds/main_menu.jpg" id="2_j3htc"]
 
-[node name="RewardScreen" type="Control"]
+[node name="RewardScreen" type="Control" unique_id=648925923]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rwscr")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1315619545]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,16 +22,21 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 7
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="MainMenu" type="Sprite2D" parent="Background" unique_id=1345851509]
+position = Vector2(640.00006, 356.5)
+scale = Vector2(0.46729654, 0.47721353)
+texture = ExtResource("2_j3htc")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1060867080]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0, 0.0, 0.0, 0.6)
+color = Color(0, 0, 0, 0.6)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=121744742]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,53 +44,52 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
-layout_mode = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1772229942]
 custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1784946007]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.95, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 38
 text = "PILIH REWARD"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 38
-theme_override_colors/font_color = Color(0.95, 0.85, 0.2, 1)
 
-[node name="NextEnemyLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="NextEnemyLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=992120822]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.8, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 16
 text = "Musuh berikutnya: ..."
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.8, 0.5, 0.5, 1)
 
-[node name="TierLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="TierLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1474632149]
 layout_mode = 2
 size_flags_horizontal = 4
-text = ""
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.6, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer" unique_id=281256931]
 custom_minimum_size = Vector2(0, 10)
-
-[node name="Buff1Button" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="Buff1Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=386202334]
 custom_minimum_size = Vector2(380, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "+30 Max HP  &  Pulihkan 30 HP"
-theme_override_font_sizes/font_size = 16
 
-[node name="Buff2Button" type="Button" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="Buff2Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1343949764]
 custom_minimum_size = Vector2(380, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "+10 Attack Damage"
-theme_override_font_sizes/font_size = 16
 
-[node name="Buff3Button" type="Button" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="Buff3Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=904879242]
 custom_minimum_size = Vector2(380, 60)
-text = "Pulihkan HP Penuh"
+layout_mode = 2
 theme_override_font_sizes/font_size = 16
+text = "Pulihkan HP Penuh"

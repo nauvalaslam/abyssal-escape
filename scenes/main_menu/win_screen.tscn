@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://ew7j3n4lqzp5"]
+[gd_scene format=3 uid="uid://ew7j3n4lq0p5"]
 
-[ext_resource type="Script" path="res://scripts/ui/win_screen_ui.gd" id="1_wnscr"]
+[ext_resource type="Script" uid="uid://cp4pajdupfsys" path="res://scripts/ui/win_screen_ui.gd" id="1_wnscr"]
+[ext_resource type="Texture2D" uid="uid://tmyfw2l8py41" path="res://assets/backgrounds/portal.jpg" id="2_bmtj5"]
 
-[node name="WinScreen" type="Control"]
+[node name="WinScreen" type="Control" unique_id=1429198715]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wnscr")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=999511167]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,16 +22,21 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 7
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="Portal" type="Sprite2D" parent="Background" unique_id=485292364]
+position = Vector2(639.5, 361)
+scale = Vector2(0.9353198, 0.9505208)
+texture = ExtResource("2_bmtj5")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=222088466]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0, 0.0, 0.0, 0.5)
+color = Color(0, 0, 0, 0.5)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1658686063]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,35 +44,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
-layout_mode = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=700951840]
 custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
 theme_override_constants/separation = 24
 
-[node name="SurvivedLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="SurvivedLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1639507103]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.95, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 80
 text = "SURVIVED"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 80
-theme_override_colors/font_color = Color(0.95, 0.85, 0.2, 1)
 
-[node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-custom_minimum_size = Vector2(480, 0)
-text = "Kamu berhasil melarikan diri dari Abyssal Dungeon!"
-horizontal_alignment = 1
-autowrap_mode = 3
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.8, 0.8, 0.95, 1)
-
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer" unique_id=1924369911]
 custom_minimum_size = Vector2(0, 20)
-
-[node name="MainMenuButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="MainMenuButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1319402634]
 custom_minimum_size = Vector2(260, 54)
-text = "Back to Main Menu"
+layout_mode = 2
 theme_override_font_sizes/font_size = 18
+text = "Back to Main Menu"

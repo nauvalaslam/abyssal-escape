@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 PlayerData="*res://scripts/globals/player_data.gd"
+AudioManager="*res://scripts/globals/audio_manager.gd"
 
 [display]
 

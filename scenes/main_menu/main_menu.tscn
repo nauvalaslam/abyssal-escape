@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://bq3f7pnaxb7m"]
+[gd_scene format=3 uid="uid://bq3f7pnaxb7m"]
 
 [ext_resource type="Script" uid="uid://bs35clqu4dc1u" path="res://scripts/ui/main_menu_ui.gd" id="1_mnscr"]
+[ext_resource type="Texture2D" uid="uid://dinuxiupiyhjk" path="res://assets/backgrounds/main_menu.jpg" id="2_0ebjn"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=1112784214]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mnscr")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1261458999]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,16 +22,21 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 7
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="MainMenu" type="Sprite2D" parent="Background" unique_id=1325774982]
+position = Vector2(640.2241, 357.125)
+scale = Vector2(0.46640694, 0.46728516)
+texture = ExtResource("2_0ebjn")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1157398376]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0, 0.0, 0.0, 0.45)
+color = Color(0, 0, 0, 0.45)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1464379291]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,12 +44,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1510141654]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1128251365]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.95, 0.75, 0.2, 1)
@@ -51,31 +57,23 @@ theme_override_font_sizes/font_size = 52
 text = "ABYSSAL ESCAPE"
 horizontal_alignment = 1
 
-[node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_colors/font_color = Color(0.9, 0.9, 1.0, 1)
-theme_override_font_sizes/font_size = 14
-text = "Selamatkan diri dari jurang yang dalam!"
-horizontal_alignment = 1
-
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer" unique_id=1311799174]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 
-[node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=577692838]
 custom_minimum_size = Vector2(260, 54)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Start Game"
 
-[node name="CreditsButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="CreditsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=274896408]
 custom_minimum_size = Vector2(260, 54)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Credits"
 
-[node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1610850747]
 custom_minimum_size = Vector2(260, 54)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18

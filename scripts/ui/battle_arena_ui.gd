@@ -75,6 +75,7 @@ var _encounter_shown: bool = false
 func _ready() -> void:
 	_load_background()   # [BG] Load background sesuai stage
 	_load_enemy_data()
+	_update_music()      # [OST] Mainkan musik sesuai tipe musuh
 	_update_ui()
 
 	attack_btn.pressed.connect(_on_attack_pressed)
@@ -99,6 +100,19 @@ func _load_background() -> void:
 		var tex: Texture2D = load(STAGE_BG_MAP[idx])
 		if tex:
 			background_rect.texture = tex
+			# Update juga Sprite2D anak jika ada (kompatibilitas setting manual editor)
+			for child in background_rect.get_children():
+				if child is Sprite2D:
+					child.texture = tex
+
+# [OST] Mainkan musik berdasarkan stage/musuh
+func _update_music() -> void:
+	if PlayerData.is_final_boss():
+		AudioManager.play_final_boss()
+	elif PlayerData.is_current_enemy_boss():
+		AudioManager.play_boss()
+	else:
+		AudioManager.play_battle()
 
 func _load_enemy_data() -> void:
 	var idx:  int        = PlayerData.current_stage
@@ -312,6 +326,7 @@ func _handle_enemy_death() -> void:
 
 	# [NEW FITUR 1] Cek apakah ini final boss (Dragon, stage terakhir)
 	if PlayerData.is_final_boss():
+		AudioManager.play_win()
 		battle_log.text = "🎉  %s dikalahkan! Kamu berhasil melarikan diri dari jurang!" % ename
 		await get_tree().create_timer(2.0).timeout
 		get_tree().change_scene_to_file("res://scenes/main_menu/win_screen.tscn")
@@ -322,6 +337,7 @@ func _handle_enemy_death() -> void:
 
 func _handle_player_death() -> void:
 	_set_buttons_disabled(true)
+	AudioManager.play_lose()
 	battle_log.text = "💀  Kamu telah dikalahkan... GAME OVER."
 	await get_tree().create_timer(2.5).timeout
 	PlayerData.reset_player()

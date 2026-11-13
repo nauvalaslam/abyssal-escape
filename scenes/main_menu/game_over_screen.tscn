@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://gameover_scn"]
+[gd_scene format=3 uid="uid://ch65347wl5l6m"]
 
-[ext_resource type="Script" path="res://scripts/ui/game_over_ui.gd" id="1_goscr"]
+[ext_resource type="Script" uid="uid://dr68p4kh7s80s" path="res://scripts/ui/game_over_ui.gd" id="1_goscr"]
+[ext_resource type="Texture2D" uid="uid://cihpua3auq5fk" path="res://assets/backgrounds/game_over.jpg" id="2_3htrk"]
 
-[node name="GameOverScreen" type="Control"]
+[node name="GameOverScreen" type="Control" unique_id=321550226]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_goscr")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=95228151]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,16 +22,21 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 7
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="GameOver" type="Sprite2D" parent="Background" unique_id=1700647314]
+position = Vector2(638.74994, 360.5)
+scale = Vector2(0.9305959, 0.9466146)
+texture = ExtResource("2_3htrk")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=845521536]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0, 0.0, 0.0, 0.55)
+color = Color(0, 0, 0, 0.55)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=254897283]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,41 +44,31 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
-layout_mode = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1891187905]
 custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
 theme_override_constants/separation = 24
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=29240062]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.9, 0.15, 0.15, 1)
+theme_override_font_sizes/font_size = 80
 text = "GAME OVER"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 80
-theme_override_colors/font_color = Color(0.9, 0.15, 0.15, 1)
 
-[node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-custom_minimum_size = Vector2(400, 0)
-text = "Kamu tidak berhasil melarikan diri dari jurang..."
-horizontal_alignment = 1
-autowrap_mode = 3
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.85, 0.75, 0.75, 1)
-
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer" unique_id=1851409638]
 custom_minimum_size = Vector2(0, 20)
-
-[node name="RetryButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="RetryButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=257022174]
 custom_minimum_size = Vector2(260, 54)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "Coba Lagi"
-theme_override_font_sizes/font_size = 18
 
-[node name="MainMenuButton" type="Button" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="MainMenuButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=976824438]
 custom_minimum_size = Vector2(260, 54)
-text = "Main Menu"
+layout_mode = 2
 theme_override_font_sizes/font_size = 18
+text = "Main Menu"

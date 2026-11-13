@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cn8p4m7qxyz1"]
+[gd_scene format=3 uid="uid://cn8p4m7qxy01"]
 
-[ext_resource type="Script" path="res://scripts/ui/battle_arena_ui.gd" id="1_bascr"]
+[ext_resource type="Script" uid="uid://dr0fy0iv0nrpd" path="res://scripts/ui/battle_arena_ui.gd" id="1_bascr"]
+[ext_resource type="Texture2D" uid="uid://dinuxiupiyhjk" path="res://assets/backgrounds/main_menu.jpg" id="2_4umnn"]
 
-[node name="BattleArena" type="Control"]
+[node name="BattleArena" type="Control" unique_id=529868202]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,26 +12,32 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_bascr")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1712688090]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("2_4umnn")
 expand_mode = 1
 stretch_mode = 7
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="MainMenu" type="Sprite2D" parent="Background" unique_id=1873116553]
+position = Vector2(640.00006, 356.5)
+scale = Vector2(0.46729654, 0.47721353)
+texture = ExtResource("2_4umnn")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1010852479]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0, 0.0, 0.0, 0.5)
+color = Color(0, 0, 0, 0.5)
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1442926279]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,125 +49,123 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 20
 
-[node name="BattleContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="BattleContainer" type="VBoxContainer" parent="MarginContainer" unique_id=492158017]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="StageLabel" type="Label" parent="MarginContainer/BattleContainer"]
+[node name="StageLabel" type="Label" parent="MarginContainer/BattleContainer" unique_id=1183283276]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.65, 0.75, 1)
+theme_override_font_sizes/font_size = 15
 text = "Stage 1 / 4"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 15
-theme_override_colors/font_color = Color(0.65, 0.65, 0.75, 1)
 
-[node name="EnemySection" type="VBoxContainer" parent="MarginContainer/BattleContainer"]
+[node name="EnemySection" type="VBoxContainer" parent="MarginContainer/BattleContainer" unique_id=979093928]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="EnemyNameLabel" type="Label" parent="MarginContainer/BattleContainer/EnemySection"]
+[node name="EnemyNameLabel" type="Label" parent="MarginContainer/BattleContainer/EnemySection" unique_id=125751443]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 26
 text = "Enemy"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 26
-theme_override_colors/font_color = Color(1.0, 0.4, 0.4, 1)
 
-[node name="IntentLabel" type="Label" parent="MarginContainer/BattleContainer/EnemySection"]
+[node name="IntentLabel" type="Label" parent="MarginContainer/BattleContainer/EnemySection" unique_id=1155781906]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 4
-visible = false
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 14
 text = "⚠️ Musuh akan menyerang: -- DMG"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(1.0, 0.85, 0.2, 1)
 
-[node name="EnemySprite" type="ColorRect" parent="MarginContainer/BattleContainer/EnemySection"]
+[node name="EnemySprite" type="ColorRect" parent="MarginContainer/BattleContainer/EnemySection" unique_id=338889219]
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(120, 120)
 color = Color(0.2, 0.8, 0.2, 1)
 
-[node name="EnemyHPLabel" type="Label" parent="MarginContainer/BattleContainer/EnemySection"]
+[node name="EnemyHPLabel" type="Label" parent="MarginContainer/BattleContainer/EnemySection" unique_id=1485124127]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
+theme_override_font_sizes/font_size = 16
 text = "HP: -- / --"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.4, 1.0, 0.4, 1)
 
-[node name="BattleLog" type="Label" parent="MarginContainer/BattleContainer"]
+[node name="BattleLog" type="Label" parent="MarginContainer/BattleContainer" unique_id=1461170012]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_vertical = 3
-custom_minimum_size = Vector2(0, 72)
+theme_override_colors/font_color = Color(0.95, 0.95, 0.75, 1)
+theme_override_font_sizes/font_size = 16
 text = "Pertempuran dimulai!"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.95, 0.95, 0.75, 1)
 
-[node name="PlayerSection" type="VBoxContainer" parent="MarginContainer/BattleContainer"]
+[node name="PlayerSection" type="VBoxContainer" parent="MarginContainer/BattleContainer" unique_id=278717941]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="PlayerLabel" type="Label" parent="MarginContainer/BattleContainer/PlayerSection"]
+[node name="PlayerLabel" type="Label" parent="MarginContainer/BattleContainer/PlayerSection" unique_id=1121478604]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.4, 0.7, 1, 1)
+theme_override_font_sizes/font_size = 20
 text = "HERO"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.4, 0.7, 1.0, 1)
 
-[node name="PlayerSprite" type="ColorRect" parent="MarginContainer/BattleContainer/PlayerSection"]
+[node name="PlayerSprite" type="ColorRect" parent="MarginContainer/BattleContainer/PlayerSection" unique_id=1388717223]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 size_flags_horizontal = 4
-custom_minimum_size = Vector2(80, 80)
 color = Color(0.25, 0.45, 0.85, 1)
 
-[node name="PlayerHPLabel" type="Label" parent="MarginContainer/BattleContainer/PlayerSection"]
+[node name="PlayerHPLabel" type="Label" parent="MarginContainer/BattleContainer/PlayerSection" unique_id=1673798333]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.4, 1, 0.4, 1)
+theme_override_font_sizes/font_size = 16
 text = "Hero HP: -- / --"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.4, 1.0, 0.4, 1)
 
-[node name="ActionButtons" type="HBoxContainer" parent="MarginContainer/BattleContainer"]
+[node name="ActionButtons" type="HBoxContainer" parent="MarginContainer/BattleContainer" unique_id=1225748713]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 12
+alignment = 1
 
-[node name="AttackButton" type="Button" parent="MarginContainer/BattleContainer/ActionButtons"]
+[node name="AttackButton" type="Button" parent="MarginContainer/BattleContainer/ActionButtons" unique_id=999924076]
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 54)
+theme_override_font_sizes/font_size = 16
 text = "Serang"
-theme_override_font_sizes/font_size = 16
 
-[node name="DefendButton" type="Button" parent="MarginContainer/BattleContainer/ActionButtons"]
+[node name="DefendButton" type="Button" parent="MarginContainer/BattleContainer/ActionButtons" unique_id=2085058315]
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 54)
+theme_override_font_sizes/font_size = 16
 text = "Bertahan"
-theme_override_font_sizes/font_size = 16
 
-[node name="HealButton" type="Button" parent="MarginContainer/BattleContainer/ActionButtons"]
+[node name="HealButton" type="Button" parent="MarginContainer/BattleContainer/ActionButtons" unique_id=75426109]
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(0, 54)
-text = "Heal"
 theme_override_font_sizes/font_size = 16
+text = "Heal"
 
-[node name="EnemyTurnTimer" type="Timer" parent="."]
+[node name="EnemyTurnTimer" type="Timer" parent="." unique_id=958359786]
 wait_time = 1.5
 one_shot = true
 
-; =============================================================================
-; [BARU - Fitur 3] EncounterLabel — Teks "Kamu dihadang oleh X" dengan fade-out
-; Diletakkan di atas semua elemen lain (z_index tinggi), posisi tengah layar.
-; =============================================================================
-[node name="EncounterLabel" type="Label" parent="."]
+[node name="EncounterLabel" type="Label" parent="." unique_id=977134701]
+visible = false
+z_index = 10
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -173,38 +178,15 @@ offset_right = 300.0
 offset_bottom = 30.0
 grow_horizontal = 2
 grow_vertical = 2
-visible = false
-z_index = 10
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 24
 text = "Kamu dihadang oleh ..."
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(1.0, 0.85, 0.3, 1)
 
-; =============================================================================
-; [BARU - Fitur 2] OpeningPanel — Panel narasi awal (hanya muncul di stage 0)
-; Overlay gelap semi-transparan yang menutupi seluruh layar.
-; =============================================================================
-[node name="OpeningPanel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="OpeningPanel" type="Panel" parent="." unique_id=1737630147]
 visible = false
 z_index = 20
-
-[node name="PanelBackground" type="ColorRect" parent="OpeningPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.0, 0.0, 0.0, 0.82)
-
-[node name="CenterContainer" type="CenterContainer" parent="OpeningPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -212,23 +194,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="OpeningPanel/CenterContainer"]
-layout_mode = 2
+[node name="PanelBackground" type="ColorRect" parent="OpeningPanel" unique_id=1883956089]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.82)
+
+[node name="CenterContainer" type="CenterContainer" parent="OpeningPanel" unique_id=271512009]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OpeningPanel/CenterContainer" unique_id=838485557]
 custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="NarasiLabel" type="Label" parent="OpeningPanel/CenterContainer/VBoxContainer"]
+[node name="NarasiLabel" type="Label" parent="OpeningPanel/CenterContainer/VBoxContainer" unique_id=551478958]
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-custom_minimum_size = Vector2(500, 0)
+theme_override_colors/font_color = Color(0.95, 0.9, 0.75, 1)
+theme_override_font_sizes/font_size = 22
 text = "Kamu terjebak di dalam goa dan kamu harus menelusuri goa ini untuk mencari jalan keluar."
 horizontal_alignment = 1
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 22
-theme_override_colors/font_color = Color(0.95, 0.90, 0.75, 1)
 
-[node name="ContinueButton" type="Button" parent="OpeningPanel/CenterContainer/VBoxContainer"]
-layout_mode = 2
+[node name="ContinueButton" type="Button" parent="OpeningPanel/CenterContainer/VBoxContainer" unique_id=105721122]
 custom_minimum_size = Vector2(240, 54)
-text = "Eksplorasi"
+layout_mode = 2
 theme_override_font_sizes/font_size = 18
+text = "Eksplorasi"

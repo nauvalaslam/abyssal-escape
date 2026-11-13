@@ -9,6 +9,8 @@ extends Control
 @onready var background_rect: TextureRect = $Background
 
 func _ready() -> void:
+	AudioManager.play_win()
+
 	# Load background via GDScript
 	var tex: Texture2D = load("res://assets/backgrounds/portal.jpg")
 	if tex:

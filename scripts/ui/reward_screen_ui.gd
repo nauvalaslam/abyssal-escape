@@ -40,6 +40,9 @@ func _ready() -> void:
 		var tex: Texture2D = load(STAGE_BG_MAP[current_idx])
 		if tex:
 			background_rect.texture = tex
+			for child in background_rect.get_children():
+				if child is Sprite2D:
+					child.texture = tex
 	# [NEW FITUR 1] Tampilkan musuh berikutnya (stage + 1)
 	var next_stage: int = PlayerData.current_stage + 1
 	if next_stage < PlayerData.ENEMY_DATA.size():
