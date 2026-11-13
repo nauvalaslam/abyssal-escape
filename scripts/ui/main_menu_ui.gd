@@ -14,21 +14,40 @@ extends Control
 
 func _ready() -> void:
 	AudioManager.play_main_menu()
-
-	# Load background via GDScript
-	var tex: Texture2D = load("res://assets/backgrounds/main_menu.jpg")
-	if tex:
-		background_rect.texture = tex
-
-	# Load title logo image
-	var logo_tex: Texture2D = load("res://assets/title/title_logo.png")
-	if logo_tex and title_logo:
-		title_logo.texture = logo_tex
+	_load_background()
+	_load_title_logo()
 
 	start_button.pressed.connect(_on_start_pressed)
 	options_button.pressed.connect(_on_options_pressed)
 	credits_button.pressed.connect(_on_credits_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
+
+func _load_background() -> void:
+	var path: String = "res://assets/backgrounds/main_menu.jpg"
+	var tex: Texture2D = null
+
+	var img: Image = Image.load_from_file(path)
+	if img:
+		tex = ImageTexture.create_from_image(img)
+	elif ResourceLoader.exists(path):
+		tex = load(path)
+
+	if tex and background_rect:
+		background_rect.texture = tex
+
+func _load_title_logo() -> void:
+	var path: String = "res://assets/title/title_logo.png"
+	var tex: Texture2D = null
+
+	# Muat gambar PNG langsung dari file (bebas dari ketergantungan file .import)
+	var img: Image = Image.load_from_file(path)
+	if img:
+		tex = ImageTexture.create_from_image(img)
+	elif ResourceLoader.exists(path):
+		tex = load(path)
+
+	if tex and title_logo:
+		title_logo.texture = tex
 
 func _on_options_pressed() -> void:
 	options_modal.open(false)
