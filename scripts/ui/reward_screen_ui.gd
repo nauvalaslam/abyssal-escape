@@ -8,14 +8,38 @@
 # =============================================================================
 extends Control
 
-@onready var title_label:      Label  = $CenterContainer/VBoxContainer/TitleLabel
-@onready var next_enemy_label: Label  = $CenterContainer/VBoxContainer/NextEnemyLabel
-@onready var tier_label:       Label  = $CenterContainer/VBoxContainer/TierLabel
-@onready var buff1_btn:        Button = $CenterContainer/VBoxContainer/Buff1Button
-@onready var buff2_btn:        Button = $CenterContainer/VBoxContainer/Buff2Button
-@onready var buff3_btn:        Button = $CenterContainer/VBoxContainer/Buff3Button
+@onready var title_label:      Label       = $CenterContainer/VBoxContainer/TitleLabel
+@onready var next_enemy_label: Label       = $CenterContainer/VBoxContainer/NextEnemyLabel
+@onready var tier_label:       Label       = $CenterContainer/VBoxContainer/TierLabel
+@onready var buff1_btn:        Button      = $CenterContainer/VBoxContainer/Buff1Button
+@onready var buff2_btn:        Button      = $CenterContainer/VBoxContainer/Buff2Button
+@onready var buff3_btn:        Button      = $CenterContainer/VBoxContainer/Buff3Button
+@onready var background_rect:  TextureRect = $Background
+
+# [BG] Mapping stage index → path background (sama dengan battle arena)
+const STAGE_BG_MAP: Dictionary = {
+	0:  "res://assets/backgrounds/slime_area.jpg",
+	1:  "res://assets/backgrounds/slime_area.jpg",
+	2:  "res://assets/backgrounds/slime_area.jpg",
+	3:  "res://assets/backgrounds/slime_area.jpg",
+	4:  "res://assets/backgrounds/goblin_area.jpg",
+	5:  "res://assets/backgrounds/goblin_area.jpg",
+	6:  "res://assets/backgrounds/goblin_area.jpg",
+	7:  "res://assets/backgrounds/goblin_area.jpg",
+	8:  "res://assets/backgrounds/skeleton_area.jpg",
+	9:  "res://assets/backgrounds/skeleton_area.jpg",
+	10: "res://assets/backgrounds/skeleton_area.jpg",
+	11: "res://assets/backgrounds/skeleton_area.jpg",
+	12: "res://assets/backgrounds/dragon_area.jpg",
+}
 
 func _ready() -> void:
+	# [BG] Load background dari stage yang baru saja diselesaikan
+	var current_idx: int = PlayerData.current_stage
+	if STAGE_BG_MAP.has(current_idx):
+		var tex: Texture2D = load(STAGE_BG_MAP[current_idx])
+		if tex:
+			background_rect.texture = tex
 	# [NEW FITUR 1] Tampilkan musuh berikutnya (stage + 1)
 	var next_stage: int = PlayerData.current_stage + 1
 	if next_stage < PlayerData.ENEMY_DATA.size():

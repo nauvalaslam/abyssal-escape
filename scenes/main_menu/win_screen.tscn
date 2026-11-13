@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://ew7j3n4lqzp5"]
+[gd_scene load_steps=3 format=3 uid="uid://ew7j3n4lqzp5"]
 
 [ext_resource type="Script" path="res://scripts/ui/win_screen_ui.gd" id="1_wnscr"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/portal.jpg" id="2_bgtex"]
 
 [node name="WinScreen" type="Control"]
 layout_mode = 3
@@ -11,14 +12,25 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wnscr")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0, 0.0, 0.0, 1)
+texture = ExtResource("2_bgtex")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0, 0.0, 0.0, 0.5)
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1

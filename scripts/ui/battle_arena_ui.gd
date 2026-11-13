@@ -9,28 +9,51 @@
 #   [NEW FITUR 4] Bounded RNG damage + enemy miss bias 35% flat
 #   [NEW FITUR 5] Passive buff: Vampiric Strike, Retaliation, Second Wind
 #   [NEW FITUR 5] Temporary Shield menggantikan defense pasif
+#   [BG] Background dinamis berdasarkan kelompok stage musuh
 # =============================================================================
 extends Control
 
 # --- Referensi Node ----------------------------------------------------------
-@onready var stage_label:      Label     = $MarginContainer/BattleContainer/StageLabel
-@onready var enemy_name_label: Label     = $MarginContainer/BattleContainer/EnemySection/EnemyNameLabel
-@onready var enemy_sprite:     ColorRect = $MarginContainer/BattleContainer/EnemySection/EnemySprite
-@onready var enemy_hp_label:   Label     = $MarginContainer/BattleContainer/EnemySection/EnemyHPLabel
-@onready var battle_log:       Label     = $MarginContainer/BattleContainer/BattleLog
-@onready var player_sprite:    ColorRect = $MarginContainer/BattleContainer/PlayerSection/PlayerSprite
-@onready var player_hp_label:  Label     = $MarginContainer/BattleContainer/PlayerSection/PlayerHPLabel
-@onready var attack_btn:       Button    = $MarginContainer/BattleContainer/ActionButtons/AttackButton
-@onready var defend_btn:       Button    = $MarginContainer/BattleContainer/ActionButtons/DefendButton
-@onready var heal_btn:         Button    = $MarginContainer/BattleContainer/ActionButtons/HealButton
-@onready var enemy_turn_timer: Timer     = $EnemyTurnTimer
+@onready var stage_label:      Label       = $MarginContainer/BattleContainer/StageLabel
+@onready var enemy_name_label: Label       = $MarginContainer/BattleContainer/EnemySection/EnemyNameLabel
+@onready var enemy_sprite:     ColorRect   = $MarginContainer/BattleContainer/EnemySection/EnemySprite
+@onready var enemy_hp_label:   Label       = $MarginContainer/BattleContainer/EnemySection/EnemyHPLabel
+@onready var battle_log:       Label       = $MarginContainer/BattleContainer/BattleLog
+@onready var player_sprite:    ColorRect   = $MarginContainer/BattleContainer/PlayerSection/PlayerSprite
+@onready var player_hp_label:  Label       = $MarginContainer/BattleContainer/PlayerSection/PlayerHPLabel
+@onready var attack_btn:       Button      = $MarginContainer/BattleContainer/ActionButtons/AttackButton
+@onready var defend_btn:       Button      = $MarginContainer/BattleContainer/ActionButtons/DefendButton
+@onready var heal_btn:         Button      = $MarginContainer/BattleContainer/ActionButtons/HealButton
+@onready var enemy_turn_timer: Timer       = $EnemyTurnTimer
+@onready var background_rect:  TextureRect = $Background
 
 # [NEW FITUR 3] IntentLabel — deklarasi aksi musuh sebelum pemain memilih
-@onready var intent_label:     Label     = $MarginContainer/BattleContainer/EnemySection/IntentLabel
+@onready var intent_label:     Label       = $MarginContainer/BattleContainer/EnemySection/IntentLabel
 
 # Node Opening & Encounter
-@onready var opening_panel:    Panel     = $OpeningPanel
-@onready var encounter_label:  Label     = $EncounterLabel
+@onready var opening_panel:    Panel       = $OpeningPanel
+@onready var encounter_label:  Label       = $EncounterLabel
+
+# --- [BG] Mapping background per kelompok stage ------------------------------
+# Stage 1-4  (index 0-3)  : Slime
+# Stage 5-8  (index 4-7)  : Goblin
+# Stage 9-12 (index 8-11) : Skeleton
+# Stage 13   (index 12)   : Dragon
+const STAGE_BG_MAP: Dictionary = {
+	0:  "res://assets/backgrounds/slime_area.jpg",
+	1:  "res://assets/backgrounds/slime_area.jpg",
+	2:  "res://assets/backgrounds/slime_area.jpg",
+	3:  "res://assets/backgrounds/slime_area.jpg",
+	4:  "res://assets/backgrounds/goblin_area.jpg",
+	5:  "res://assets/backgrounds/goblin_area.jpg",
+	6:  "res://assets/backgrounds/goblin_area.jpg",
+	7:  "res://assets/backgrounds/goblin_area.jpg",
+	8:  "res://assets/backgrounds/skeleton_area.jpg",
+	9:  "res://assets/backgrounds/skeleton_area.jpg",
+	10: "res://assets/backgrounds/skeleton_area.jpg",
+	11: "res://assets/backgrounds/skeleton_area.jpg",
+	12: "res://assets/backgrounds/dragon_area.jpg",
+}
 
 # --- State lokal pertempuran -------------------------------------------------
 var enemy_max_hp:     int  = 0
@@ -50,6 +73,7 @@ var _encounter_shown: bool = false
 # INISIALISASI
 # =============================================================================
 func _ready() -> void:
+	_load_background()   # [BG] Load background sesuai stage
 	_load_enemy_data()
 	_update_ui()
 
@@ -67,6 +91,14 @@ func _ready() -> void:
 	else:
 		_show_encounter_text()
 		_start_player_turn()
+
+# [BG] Load texture background berdasarkan stage saat ini
+func _load_background() -> void:
+	var idx: int = PlayerData.current_stage
+	if STAGE_BG_MAP.has(idx):
+		var tex: Texture2D = load(STAGE_BG_MAP[idx])
+		if tex:
+			background_rect.texture = tex
 
 func _load_enemy_data() -> void:
 	var idx:  int        = PlayerData.current_stage
@@ -135,7 +167,7 @@ func _start_player_turn() -> void:
 func _declare_enemy_intent() -> void:
 	var edata: Dictionary = PlayerData.ENEMY_DATA[PlayerData.current_stage]
 
-	# [NEW FITUR 4] Hitung preview damage yang akan dilakukan musuh (tanpa RNG miss dulu)
+	# [NEW FITUR 4] Hitung preview damage yang akan dilakukan musuh
 	enemy_declared_dmg = PlayerData.calculate_damage(int(edata["attack"]), PlayerData.defense_value)
 
 	# [NEW FITUR 3] Tampilkan ke IntentLabel
@@ -182,7 +214,7 @@ func _on_defend_pressed() -> void:
 	_set_buttons_disabled(true)
 	intent_label.visible = false
 
-	# [NEW FITUR 5] Temporary Shield = 10 (asumsi proporsional dengan stat)
+	# [NEW FITUR 5] Temporary Shield = 10
 	# [ASUMSI] Nilai shield flat 10 per aksi Bertahan
 	PlayerData.current_shield = 10
 	battle_log.text = "🛡️  Kamu bersiap! Shield +10 aktif."
@@ -193,7 +225,7 @@ func _on_heal_pressed() -> void:
 	_set_buttons_disabled(true)
 	intent_label.visible = false
 
-	# [ASUMSI] Heal = 15 HP per aksi (proporsional dengan stat scaling baru)
+	# [ASUMSI] Heal = 15 HP per aksi
 	const HEAL_AMOUNT: int = 15
 	var healed: int = min(HEAL_AMOUNT, PlayerData.max_hp - PlayerData.current_hp)
 	PlayerData.current_hp += healed
@@ -293,7 +325,8 @@ func _handle_player_death() -> void:
 	battle_log.text = "💀  Kamu telah dikalahkan... GAME OVER."
 	await get_tree().create_timer(2.5).timeout
 	PlayerData.reset_player()
-	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
+	# [BG] Pindah ke scene Game Over khusus
+	get_tree().change_scene_to_file("res://scenes/main_menu/game_over_screen.tscn")
 
 # =============================================================================
 # [NEW FITUR 1 & 3] UI HELPER — Encounter text (dipanggil sekali per stage)
