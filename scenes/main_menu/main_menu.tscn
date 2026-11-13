@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bq3f7pnaxb7m"]
+[gd_scene load_steps=4 format=3 uid="uid://bq3f7pnaxb7m"]
 
 [ext_resource type="Script" uid="uid://bs35clqu4dc1u" path="res://scripts/ui/main_menu_ui.gd" id="1_mnscr"]
-[ext_resource type="PackedScene" path="res://scenes/ui/options_modal.tscn" id="2_optmodal"]
+[ext_resource type="Texture2D" uid="uid://dinuxiupiyhjk" path="res://assets/backgrounds/main_menu.jpg" id="2_0ebjn"]
+[ext_resource type="PackedScene" path="res://scenes/ui/options_modal.tscn" id="3_optmodal"]
 
 [node name="MainMenu" type="Control" unique_id=1112784214]
 layout_mode = 3
@@ -19,8 +20,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("2_0ebjn")
 expand_mode = 1
-stretch_mode = 7
+stretch_mode = 0
 
 [node name="Overlay" type="ColorRect" parent="." unique_id=1157398376]
 layout_mode = 1
@@ -42,43 +44,47 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1510141654]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 14
 
 [node name="TitleLogo" type="TextureRect" parent="CenterContainer/VBoxContainer" unique_id=1128251365]
-custom_minimum_size = Vector2(480, 105)
+custom_minimum_size = Vector2(680, 145)
 layout_mode = 2
 size_flags_horizontal = 4
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer" unique_id=1311799174]
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
 [node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=577692838]
-custom_minimum_size = Vector2(260, 54)
+custom_minimum_size = Vector2(260, 52)
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 18
 text = "Start Game"
 
 [node name="OptionsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1982736451]
-custom_minimum_size = Vector2(260, 54)
+custom_minimum_size = Vector2(260, 52)
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 18
 text = "Options"
 
 [node name="CreditsButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=274896408]
-custom_minimum_size = Vector2(260, 54)
+custom_minimum_size = Vector2(260, 52)
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 18
 text = "Credits"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1610850747]
-custom_minimum_size = Vector2(260, 54)
+custom_minimum_size = Vector2(260, 52)
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 18
 text = "Quit"
 
-[node name="OptionsModal" parent="." instance=ExtResource("2_optmodal")]
+[node name="OptionsModal" parent="." instance=ExtResource("3_optmodal")]
 visible = false
 layout_mode = 1

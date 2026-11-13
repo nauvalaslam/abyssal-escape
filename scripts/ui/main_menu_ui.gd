@@ -26,11 +26,18 @@ func _load_background() -> void:
 	var path: String = "res://assets/backgrounds/main_menu.jpg"
 	var tex: Texture2D = null
 
-	var img: Image = Image.load_from_file(path)
-	if img:
-		tex = ImageTexture.create_from_image(img)
-	elif ResourceLoader.exists(path):
+	# Coba via ResourceLoader terlebih dahulu
+	if ResourceLoader.exists(path):
 		tex = load(path)
+
+	# Fallback via Image.load_from_file jika perlu
+	if not tex:
+		var gpath: String = ProjectSettings.globalize_path(path)
+		var img: Image = Image.load_from_file(gpath)
+		if not img:
+			img = Image.load_from_file(path)
+		if img:
+			tex = ImageTexture.create_from_image(img)
 
 	if tex and background_rect:
 		background_rect.texture = tex
@@ -40,7 +47,10 @@ func _load_title_logo() -> void:
 	var tex: Texture2D = null
 
 	# Muat gambar PNG langsung dari file (bebas dari ketergantungan file .import)
-	var img: Image = Image.load_from_file(path)
+	var gpath: String = ProjectSettings.globalize_path(path)
+	var img: Image = Image.load_from_file(gpath)
+	if not img:
+		img = Image.load_from_file(path)
 	if img:
 		tex = ImageTexture.create_from_image(img)
 	elif ResourceLoader.exists(path):
