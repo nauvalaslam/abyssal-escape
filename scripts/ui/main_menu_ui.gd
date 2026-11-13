@@ -1,15 +1,20 @@
 # =============================================================================
 # scripts/ui/main_menu_ui.gd
 # Logika Main Menu: Start Game, Credits, Quit.
-# Dipasang pada node root scene res://scenes/main_menu/main_menu.tscn
 # =============================================================================
 extends Control
 
-@onready var start_button:   Button = $CenterContainer/VBoxContainer/StartButton
-@onready var credits_button: Button = $CenterContainer/VBoxContainer/CreditsButton
-@onready var quit_button:    Button = $CenterContainer/VBoxContainer/QuitButton
+@onready var start_button:    Button      = $CenterContainer/VBoxContainer/StartButton
+@onready var credits_button:  Button      = $CenterContainer/VBoxContainer/CreditsButton
+@onready var quit_button:     Button      = $CenterContainer/VBoxContainer/QuitButton
+@onready var background_rect: TextureRect = $Background
 
 func _ready() -> void:
+	# Load background via GDScript agar tidak butuh .import file di .tscn
+	var tex: Texture2D = load("res://assets/backgrounds/main_menu.jpg")
+	if tex:
+		background_rect.texture = tex
+
 	start_button.pressed.connect(_on_start_pressed)
 	credits_button.pressed.connect(_on_credits_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)

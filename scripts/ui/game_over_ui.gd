@@ -5,10 +5,16 @@
 # =============================================================================
 extends Control
 
-@onready var retry_btn:     Button = $CenterContainer/VBoxContainer/RetryButton
-@onready var main_menu_btn: Button = $CenterContainer/VBoxContainer/MainMenuButton
+@onready var retry_btn:       Button      = $CenterContainer/VBoxContainer/RetryButton
+@onready var main_menu_btn:   Button      = $CenterContainer/VBoxContainer/MainMenuButton
+@onready var background_rect: TextureRect = $Background
 
 func _ready() -> void:
+	# Load background via GDScript
+	var tex: Texture2D = load("res://assets/backgrounds/game_over.jpg")
+	if tex:
+		background_rect.texture = tex
+
 	# Fade in dari hitam
 	modulate = Color(0.0, 0.0, 0.0, 0.0)
 	var tween: Tween = create_tween()
@@ -18,7 +24,6 @@ func _ready() -> void:
 	main_menu_btn.pressed.connect(_on_main_menu_pressed)
 
 func _on_retry_pressed() -> void:
-	# Reset semua state pemain lalu mulai dari stage 0
 	PlayerData.reset_player()
 	get_tree().change_scene_to_file("res://scenes/gameplay/battle_arena.tscn")
 

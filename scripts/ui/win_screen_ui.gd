@@ -1,15 +1,20 @@
 # =============================================================================
 # scripts/ui/win_screen_ui.gd
-# Layar kemenangan yang muncul setelah Dragon (Boss) dikalahkan.
-# Menampilkan teks "SURVIVED" dengan efek fade-in, lalu tombol kembali.
-# Dipasang pada node root scene res://scenes/main_menu/win_screen.tscn
+# Layar kemenangan — tampil setelah Dragon dikalahkan.
+# Background: portal.jpg
 # =============================================================================
 extends Control
 
-@onready var main_menu_btn: Button = $CenterContainer/VBoxContainer/MainMenuButton
+@onready var main_menu_btn:   Button      = $CenterContainer/VBoxContainer/MainMenuButton
+@onready var background_rect: TextureRect = $Background
 
 func _ready() -> void:
-	# Mulai dari transparan lalu fade in ke opak
+	# Load background via GDScript
+	var tex: Texture2D = load("res://assets/backgrounds/portal.jpg")
+	if tex:
+		background_rect.texture = tex
+
+	# Fade in dari hitam
 	modulate = Color(0.0, 0.0, 0.0, 0.0)
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "modulate", Color.WHITE, 1.5)
