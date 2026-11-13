@@ -100,10 +100,15 @@ func _load_background() -> void:
 		var tex: Texture2D = load(STAGE_BG_MAP[idx])
 		if tex:
 			background_rect.texture = tex
-			# Update juga Sprite2D anak jika ada (kompatibilitas setting manual editor)
+			# Sesuaikan ukuran child Sprite2D jika masih ada di scene
 			for child in background_rect.get_children():
 				if child is Sprite2D:
 					child.texture = tex
+					var tw: float = float(tex.get_width())
+					var th: float = float(tex.get_height())
+					if tw > 0 and th > 0:
+						child.position = Vector2(640, 360)
+						child.scale = Vector2(1280.0 / tw, 720.0 / th)
 
 # [OST] Mainkan musik berdasarkan stage/musuh
 func _update_music() -> void:

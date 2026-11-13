@@ -20,12 +20,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
-stretch_mode = 7
-
-[node name="MainMenu" type="Sprite2D" parent="Background" unique_id=1345851509]
-position = Vector2(640.00006, 356.5)
-scale = Vector2(0.46729654, 0.47721353)
-texture = ExtResource("2_j3htc")
+stretch_mode = 0
 
 [node name="Overlay" type="ColorRect" parent="." unique_id=1060867080]
 layout_mode = 1

@@ -43,6 +43,11 @@ func _ready() -> void:
 			for child in background_rect.get_children():
 				if child is Sprite2D:
 					child.texture = tex
+					var tw: float = float(tex.get_width())
+					var th: float = float(tex.get_height())
+					if tw > 0 and th > 0:
+						child.position = Vector2(640, 360)
+						child.scale = Vector2(1280.0 / tw, 720.0 / th)
 	# [NEW FITUR 1] Tampilkan musuh berikutnya (stage + 1)
 	var next_stage: int = PlayerData.current_stage + 1
 	if next_stage < PlayerData.ENEMY_DATA.size():

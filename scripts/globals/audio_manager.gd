@@ -13,12 +13,12 @@
 extends Node
 
 const TRACKS: Dictionary = {
-	"main_menu":  "res://assets/audio/main_menu_ost.ogg",
-	"battle":     "res://assets/audio/battle_ost.ogg",
-	"boss":       "res://assets/audio/boss_ost.ogg",
-	"final_boss": "res://assets/audio/final_boss_ost.ogg",
-	"win":        "res://assets/audio/win_ost.ogg",
-	"lose":       "res://assets/audio/lose_ost.ogg",
+	"main_menu":  "res://assets/audio/main_menu_ost.mp3",
+	"battle":     "res://assets/audio/battle_ost.mp3",
+	"boss":       "res://assets/audio/boss_ost.mp3",
+	"final_boss": "res://assets/audio/final_boss_ost.mp3",
+	"win":        "res://assets/audio/win_ost.mp3",
+	"lose":       "res://assets/audio/lose_ost.mp3",
 }
 
 var current_track: String = ""
@@ -40,10 +40,24 @@ func play_track(track_name: String) -> void:
 		return
 
 	var path: String = TRACKS[track_name]
-	var stream: AudioStream = load(path)
-	if stream:
-		if stream is AudioStreamOggVorbis:
+	var stream: AudioStream = null
+
+	# Metode 1: Muat byte MP3 langsung via FileAccess (tanpa perlu ketergantungan import editor)
+	if FileAccess.file_exists(path):
+		var file = FileAccess.open(path, FileAccess.READ)
+		if file:
+			var mp3_stream = AudioStreamMP3.new()
+			mp3_stream.data = file.get_buffer(file.get_length())
+			mp3_stream.loop = true
+			stream = mp3_stream
+
+	# Metode 2: Fallback standar jika metode 1 tidak aktif
+	if not stream and ResourceLoader.exists(path):
+		stream = load(path)
+		if stream and stream is AudioStreamMP3:
 			stream.loop = true
+
+	if stream:
 		bgm_player.stream = stream
 		bgm_player.play()
 		current_track = track_name
