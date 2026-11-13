@@ -59,31 +59,30 @@ func _setup_synergistic_buffs() -> void:
 	tier_label.text  = "👑  Boss Reward"
 	tier_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2, 1))
 
-	buff1_btn.text = _buff_label(
-		"🧛 Vampiric Strike",
-		"Heal 25% dari setiap damage yang diberikan",
-		PlayerData.buff_vampiric
-	)
-	buff2_btn.text = _buff_label(
-		"⚡ Retaliation",
-		"Pantul 50% damage ke musuh saat Shield aktif",
-		PlayerData.buff_retaliation
-	)
-	buff3_btn.text = _buff_label(
-		"💨 Second Wind",
-		"Bangkit 1x saat HP = 0, pulih 30% Max HP",
-		PlayerData.buff_second_wind
-	)
+	# Data buff: [key, nama_tampil, deskripsi, sudah_dimiliki, tombol, signal_name]
+	var buff_data: Array = [
+		["vampiric",    "🧛 Vampiric Strike", "Heal 25% dari setiap damage yang diberikan",    PlayerData.buff_vampiric,    buff1_btn],
+		["retaliation", "⚡ Retaliation",     "Pantul 50% damage ke musuh saat Shield aktif",  PlayerData.buff_retaliation, buff2_btn],
+		["second_wind", "💨 Second Wind",     "Bangkit 1x saat HP = 0, pulih 30% Max HP",      PlayerData.buff_second_wind, buff3_btn],
+	]
 
-	buff1_btn.pressed.connect(func(): _apply_and_next("vampiric"))
-	buff2_btn.pressed.connect(func(): _apply_and_next("retaliation"))
-	buff3_btn.pressed.connect(func(): _apply_and_next("second_wind"))
+	for entry in buff_data:
+		var key:    String = entry[0]
+		var bname:  String = entry[1]
+		var desc:   String = entry[2]
+		var owned:  bool   = entry[3]
+		var btn:    Button = entry[4]
 
-# Helper: format tombol buff + tanda [SUDAH AKTIF] jika sudah dimiliki
-func _buff_label(bname: String, desc: String, already_owned: bool) -> String:
-	if already_owned:
-		return "%s\n%s\n✅ [SUDAH AKTIF]" % [bname, desc]
-	return "%s\n%s" % [bname, desc]
+		btn.text = "%s\n%s" % [bname, desc]
+
+		if owned:
+			# Buff sudah aktif: kurangi opacity, nonaktifkan interaksi & hover cursor
+			btn.modulate        = Color(1.0, 1.0, 1.0, 0.35)   # 35% opacity
+			btn.disabled        = true
+			btn.mouse_default_cursor_shape = Control.CURSOR_ARROW  # hilangkan cursor pointer
+		else:
+			btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
+			btn.pressed.connect(func(): _apply_and_next(key))
 
 func _apply_and_next(buff_type: String) -> void:
 	buff1_btn.disabled = true
