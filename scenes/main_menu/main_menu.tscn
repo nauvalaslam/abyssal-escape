@@ -47,7 +47,7 @@ layout_mode = 2
 theme_override_constants/separation = 14
 
 [node name="TitleLogo" type="TextureRect" parent="CenterContainer/VBoxContainer" unique_id=1128251365]
-custom_minimum_size = Vector2(900, 192)
+custom_minimum_size = Vector2(880, 160)
 layout_mode = 2
 size_flags_horizontal = 4
 expand_mode = 1
