@@ -1,6 +1,6 @@
 # =============================================================================
 # scripts/ui/main_menu_ui.gd
-# Logika Main Menu: Start Game, Credits, Quit.
+# Logika Main Menu: Start Game, Options, Credits, Quit.
 # =============================================================================
 extends Control
 
@@ -9,15 +9,21 @@ extends Control
 @onready var credits_button:  Button      = $CenterContainer/VBoxContainer/CreditsButton
 @onready var quit_button:     Button      = $CenterContainer/VBoxContainer/QuitButton
 @onready var background_rect: TextureRect = $Background
+@onready var title_logo:      TextureRect = $CenterContainer/VBoxContainer/TitleLogo
 @onready var options_modal:   Control     = $OptionsModal
 
 func _ready() -> void:
 	AudioManager.play_main_menu()
 
-	# Load background via GDScript agar tidak butuh .import file di .tscn
+	# Load background via GDScript
 	var tex: Texture2D = load("res://assets/backgrounds/main_menu.jpg")
 	if tex:
 		background_rect.texture = tex
+
+	# Load title logo image
+	var logo_tex: Texture2D = load("res://assets/title/title_logo.png")
+	if logo_tex and title_logo:
+		title_logo.texture = logo_tex
 
 	start_button.pressed.connect(_on_start_pressed)
 	options_button.pressed.connect(_on_options_pressed)
@@ -25,7 +31,7 @@ func _ready() -> void:
 	quit_button.pressed.connect(_on_quit_pressed)
 
 func _on_options_pressed() -> void:
-	options_modal.open()
+	options_modal.open(false)
 
 func _on_start_pressed() -> void:
 	PlayerData.reset_player()

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bq3f7pnaxb7m"]
+[gd_scene load_steps=5 format=3 uid="uid://bq3f7pnaxb7m"]
 
 [ext_resource type="Script" uid="uid://bs35clqu4dc1u" path="res://scripts/ui/main_menu_ui.gd" id="1_mnscr"]
 [ext_resource type="Texture2D" uid="uid://dinuxiupiyhjk" path="res://assets/backgrounds/main_menu.jpg" id="2_0ebjn"]
 [ext_resource type="PackedScene" path="res://scenes/ui/options_modal.tscn" id="3_optmodal"]
+[ext_resource type="Texture2D" path="res://assets/title/title_logo.png" id="4_titlelogo"]
 
 [node name="MainMenu" type="Control" unique_id=1112784214]
 layout_mode = 3
@@ -50,13 +51,13 @@ custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1128251365]
+[node name="TitleLogo" type="TextureRect" parent="CenterContainer/VBoxContainer" unique_id=1128251365]
+custom_minimum_size = Vector2(460, 98)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_colors/font_color = Color(0.95, 0.75, 0.2, 1)
-theme_override_font_sizes/font_size = 52
-text = "ABYSSAL ESCAPE"
-horizontal_alignment = 1
+texture = ExtResource("4_titlelogo")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer" unique_id=1311799174]
 custom_minimum_size = Vector2(0, 28)
