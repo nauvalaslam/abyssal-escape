@@ -86,7 +86,7 @@ func _ready() -> void:
 	defend_btn.pressed.connect(_on_defend_pressed)
 	heal_btn.pressed.connect(_on_heal_pressed)
 	enemy_turn_timer.timeout.connect(_execute_enemy_turn)
-	settings_button.pressed.connect(options_modal.open)
+	settings_button.pressed.connect(func(): options_modal.open(true))
 
 	# Hubungkan tombol Continue di OpeningPanel
 	var continue_btn: Button = $OpeningPanel/CenterContainer/VBoxContainer/ContinueButton
